@@ -4,6 +4,7 @@ import Modal from "./Modal";
 
 const JoinRoom = () => {
   const [isRoomOpen, setIsRoomOpen] = useState(false);
+  const [error, setError] = useState({ status: 0, message: "" });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -11,7 +12,30 @@ const JoinRoom = () => {
     const roomPass = e.target.roomPass.value;
 
     console.log({ roomName, roomPass });
-    setIsRoomOpen(!isRoomOpen);
+    const getRooms = JSON.parse(localStorage.getItem("rooms"));
+    if (!getRooms) {
+      setError({
+        status: 500,
+        message: "No rooms found. please create a new room",
+      });
+    }
+    const roomNameMatch = getRooms.find((r) => r.roomName === roomName);
+    if (!roomNameMatch) {
+      setError({
+        status: 500,
+        message: "No rooms found by the same name",
+      });
+    }
+    if(roomNameMatch.roomPass !== roomPass) {
+      setError({
+        status: 500,
+        message: "Room Password didn't matched. Please try again.",
+      });
+    }
+    localStorage.setItem("Joined-room",JSON.stringify(roomNameMatch));
+    setError({ status: 0, message: "" })
+    window.location.reload()
+    
   };
 
   return (
@@ -51,21 +75,26 @@ const JoinRoom = () => {
               required
             />
           </div>
+          {error.message && (
+            <span className="text-sm text-red-400">
+              Error: {error?.message}
+            </span>
+          )}
           <div className="flex gap-2">
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded mt-3"
-          >
-            Join Room
-          </button>
-          <button
-            onClick={() => {
-              setIsRoomOpen(!isRoomOpen);
-            }}
-            className="px-4 py-2 bg-red-500 text-white rounded mt-3"
-          >
-            Close
-          </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded mt-3"
+            >
+              Join Room
+            </button>
+            <button
+              onClick={() => {
+                setIsRoomOpen(!isRoomOpen);
+              }}
+              className="px-4 py-2 bg-red-500 text-white rounded mt-3"
+            >
+              Close
+            </button>
           </div>
         </form>
       </Modal>
