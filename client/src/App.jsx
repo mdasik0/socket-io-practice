@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import JoinOrCreate from "./component/JoinOrCreate";
+import Chats from "./component/Chats";
 
 const App = () => {
   const [room, setRoom] = useState(null);
@@ -24,6 +25,7 @@ const App = () => {
         </h1>
         <button onClick={leaveRoom} className="px-4 py-2 bg-red-500 text-white hover:bg-red-400 duration-300 rounded">Leave room</button>
         </div>
+        <Chats />
       </div>
     );
   } else {
